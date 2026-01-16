@@ -55,16 +55,13 @@ def transferencia_sftp_dag():
         for f in arquivos:
             print(f"Arquivo transferido com sucesso: {f}")
 
-    @task
-    def deletar_arquivos_origem(arquivos: list):
-        hook = SFTPHook(ftp_conn_id='copiar')
+     @task
+    def deletar_arquivos_origem_sftp(arquivos):
+        sftp_hook = SFTPHook(ssh_conn_id='copiar')
         for f in arquivos:
-            remoto = os.path.join(REMOTE_SOURCE_PATH, f)
-            try:
-                hook.delete_file(remoto)
-                print(f"Arquivo removido da origem: {remoto}")
-            except Exception as e:
-                print(f"Falha ao remover {remoto}: {e}")
+            remote_f_path = os.path.join(REMOTE_SOURCE_PATH, f)
+            sftp_hook.delete_file(remote_f_path)
+            print(f"Removido da origem: {f}")
 
     @task
     def deletar_arquivos_locais():
@@ -108,7 +105,7 @@ def transferencia_sftp_dag():
     # Finalização
     enviar >> log_arquivos_transferidos(lista_nomes)
     enviar >> deletar_arquivos_locais()
-    log_arquivos_transferidos(lista_nomes) >> deletar_arquivos_origem(lista_nomes)
+    enviar >> >> deletar_arquivos_origem_sftp(lista_arquivos)
 
 # Instancia a DAG
 transferencia_sftp_dag()
