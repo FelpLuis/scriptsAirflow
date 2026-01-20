@@ -13,13 +13,13 @@ REMOTE_DEST_PATH = '/home/timeware/recebe_airflow' #caminhho pasta destino
 default_args = {
     'owner': 'airflow',
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(seconds=3),
 }
 
 @dag(
     dag_id="transferencia_sftp",
     default_args=default_args,
-    start_date=datetime(2026, 1, 15),
+    start_date=datetime(2026, 1, 20),
     schedule=timedelta(seconds=3),
     catchup=False, 
     max_active_runs=1,
